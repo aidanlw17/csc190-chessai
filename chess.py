@@ -24,7 +24,6 @@ def PrintBoard(board):
             else:
                 linestr = ("%2s" % str((cnt-8)*-8))+ "   " + linestr + "\n" + "\n"
             boardstr += linestr
-            #print(linestr)
             linestr = ""
             cnt += 1
     print(boardstr)
@@ -65,7 +64,6 @@ def GetPieceLegalMoves(board,position):
         24: BQueenLM,
         25: BKingLM
     }
-    print("The piece is: " + str(piece))
     return pieces[piece](board,position)
 
 def WPawnLM(board, position):
@@ -90,7 +88,6 @@ def WPawnLM(board, position):
     elif(position<56 and (position-position//8)%7==0):
         if(board[position+7]>=20):
             moves+=[position+7]
-    print(moves)
     return moves
 
 def BPawnLM(board,position):
@@ -157,8 +154,6 @@ def BKnightLM(board,position):
     for p in a:
         if((position+p)>=0 and (position+p)<64):
             if(board[position+p]==0 or board[position+p]<=15):
-                print(p)
-                print(position)
                 moves+=[position+p]
     return moves
 
@@ -390,30 +385,45 @@ def BKingLM(board,position):
                 moves+=[position+i]
     return moves
 
+def KingSafe(player,board):
+    kingval=25
+    if(player==10):
+        kingval=15
+    for i in range(0,64,1):
+        if(board[i]==kingval):
+            [isnotsafe,threats]=IsPositionUnderThreat(board,i,player)
+            if isnotsafe==True:
+                return [False,threats]
+    return [True,-1]
+
+#def isCheckmated(player,board):
+
+#def isCheck(player,board):
+
 def IsPositionUnderThreat(board,position,player):
     threats=[]
     potentThreats=[]
     piece=board[position]
     underThreat=False
     if(player==10):
-        for i in board:
-            if((i-10)>=10):
+        for i in range(0,64,1):
+            if((board[i]-10)>=10):
                 potentThreats=GetPieceLegalMoves(board,i)
                 for k in potentThreats:
                     if(position==k):
-                        threats+=i
+                        threats+=[board[i]]
                         underThreat=True
                         break
     elif(player==20):
-        for i in board:
-            if((i-10)<10 and (i-10)>=0):
+        for i in range(0,64,1):
+            if((board[i]-10)<10 and (board[i]-10)>=0):
                 potentThreats=GetPieceLegalMoves(board,i)
                 for k in potentThreats:
                     if(position==k):
-                        threats+=i
+                        threats+=[board[i]]
                         underThreat=True
                         break
-    return underThreat
+    return [underThreat,threats]
 
 
 
