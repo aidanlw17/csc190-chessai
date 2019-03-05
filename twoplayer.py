@@ -2,81 +2,141 @@ from chess import *
 
 #print and generate the board
 board = GenBoard()
-wKingPosition=4
-bKingPosition=60
 done=False
 while not(done):
     possible=False
     while not(possible):
+        checked=isInCheck(board,10)
         print("Board:\n")
         PrintBoard(board)
         print("--------White's Move--------\n")
-        piece=int(input("Which position would you like to move?\n"))
-        if(board[piece]<=15):
-            move=int(input("Where would you like to move the piece?\n"))
-            candMoves=GetPieceLegalMoves(board,piece)
-            for i in candMoves:
-                if(move==i):
-                    [kingissafe,threats]=KingSafe(10,board)
-                    if kingissafe:
-                        possible=True
+        #White in check!
+        if(checked==True):
+            print("You are in check.")
+            piece=int(input("Which position would you like to move?\n"))
+            if(board[piece]<=15):
+                move=int(input("Where would you like to move the piece?\n"))
+                candMoves=GetPieceLegalMoves(board,piece)
+                for i in candMoves:
+                    if(move==i):
+                        tmpb=board[:]
+                        tmpb[move]=tmpb[piece]
+                        tmpb[piece]=0
+                        stillCheck = isInCheck(tmpb,10)
+                        if(stillCheck==False):
+                            possible=True
+                        else:
+                            print("This move does not relieve you from check. Try again!")
                         break
-                    else:
-                        for k in threats:
-                            if(move==k):
-                                tmpb = board
-                                tmpb[move]=board[piece]
-                                tmpb[piece]=0
-                                if (KingSafe(10,tmpb))[1]== -1:
-                                    possible=True
-                                    break
-                                else:
-                                    print("This move does not fully remove your king from check! Try again.")
-                                    break
-            if(possible):
-                tmp=board[piece]
-                board[piece]=0
-                board[move]=tmp
-
+                if(possible):
+                    board[move]=board[piece]
+                    board[piece]=0
+                elif(possible==False):
+                    print("That move is not possible.")
+            else:
+                print("You do not have a piece in that position! \n")
+        
+        #White not in check!
         else:
-            print("You do not have a piece in that position! \n")
+            print("Not in check.")
+            piece=int(input("Which position would you like to move?\n"))
+            if(board[piece]<=15):
+                move=int(input("Where would you like to move the piece?\n"))
+                candMoves=GetPieceLegalMoves(board,piece)
+                for i in candMoves:
+                    if(move==i):
+                        tmpb=board[:]
+                        tmpb[move]=tmpb[piece]
+                        tmpb[piece]=0
+                        inCheck = isInCheck(tmpb,10)
+                        if(inCheck==False):
+                            possible=True
+                        else:
+                            print("This move puts you in check. Try again!")
+                        break
+                if(possible):
+                    board[move]=board[piece]
+                    board[piece]=0
+                elif(possible==False):
+                    print("That move is not possible.")
+            else:
+                print("You do not have a piece in that position! \n")
+
+    print("CHECKMATE CHECK BEFORE BLACK TURN")
+    print("#########################")
+    #Check if last move resulted in black's checkmate
+    if(isCheckmate(board,20)):
+        print("This is checkmate. White wins!")
+        done=True
+        break
 
     possible=False
-    print(board)
     while not(possible):
+        checked=isInCheck(board,20)
+        print("Checked:")
+        print(checked)
         print("Board:\n")
         PrintBoard(board)
         print("--------Black's Move--------\n")
-        piece=int(input("Which position would you like to move?\n"))
-        if(board[piece]>=20):
-            move=int(input("Where would you like to move the piece?\n"))
-            candMoves=GetPieceLegalMoves(board,piece)
-            print(candMoves)
-            possible=False
-            for i in candMoves:
-                if(move==i):
-                    [kingissafe,threats]=KingSafe(20,board)
-                    if kingissafe:
-                        possible=True
+        
+        #Black in check!
+        if(checked==True):
+            print("You are in check.")
+            piece=int(input("Which position would you like to move?\n"))
+            if(board[piece]>=20):
+                move=int(input("Where would you like to move the piece?\n"))
+                candMoves=GetPieceLegalMoves(board,piece)
+                for i in candMoves:
+                    if(move==i):
+                        tmpb=board[:]
+                        tmpb[move]=tmpb[piece]
+                        tmpb[piece]=0
+                        stillCheck = isInCheck(tmpb,20)
+                        if(stillCheck==False):
+                            possible=True
+                        else:
+                            print("This move does not relieve you from check. Try again!")
                         break
-                    else:
-                        for k in threats:
-                            if(move==k):
-                                tmpb=board
-                                tmpb[move]=board[piece]
-                                tmpb[piece]=0
-                                if (KingSafe(20,tmpb))[1]==-1:
-                                    possible=True
-                                    break
-                                else:
-                                    print("This move does not fully remove your king from check! Try again.")
-                                    break
-            if(possible):
-                tmp=board[piece]
-                board[piece]=0
-                board[move]=tmp
+                if(possible):
+                    board[move]=board[piece]
+                    board[piece]=0
+                elif(possible==False):
+                    print("That move is not possible.")
             else:
-                print("That move is not possible.")
+                print("You do not have a piece in that position! \n")
+        
+        #Black not in check!
         else:
-            print("You do not have a piece in that position! \n")
+            print("Not in check")
+            piece=int(input("Which position would you like to move?\n"))
+            if(board[piece]>=20):
+                move=int(input("Where would you like to move the piece?\n"))
+                candMoves=GetPieceLegalMoves(board,piece)
+                for i in candMoves:
+                    if(move==i):
+                        tmpb=board[:]
+                        tmpb[move]=tmpb[piece]
+                        tmpb[piece]=0
+                        stillCheck = isInCheck(tmpb,20)
+                        if(stillCheck==False):
+                            possible=True
+                        else:
+                            print("This move puts you in check. Try again!")
+                        break
+                if(possible):
+                    board[move]=board[piece]
+                    board[piece]=0
+                elif(possible==False):
+                    print("That move is not possible.")
+            else:
+                print("You do not have a piece in that position! \n")
+
+    print("CHECKMATE CHECK BEFORE WHITE TURN")
+    print("#########################")
+    #Check if last move resulted in black's checkmate
+    if(isCheckmate(board,10)):
+        print("This is checkmate. Black wins!")
+        done=True
+        break
+
 

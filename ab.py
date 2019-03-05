@@ -1,9 +1,9 @@
 class AlphaBeta:
     # print utility value of root node (assuming it is max)
     # print names of all nodes visited during search
-    def __init__(self, game_tree):
-        self.game_tree = game_tree  # GameTree
-        self.root = game_tree.root  # GameNode
+    def __init__(self, gametree):
+        self.game_tree = gametree  # GameTree
+        self.root = gametree.value  # GameNode
         return
 
     def alpha_beta_search(self, node):
@@ -15,15 +15,17 @@ class AlphaBeta:
         best_state = None
         for state in successors:
             value = self.min_value(state, best_val, beta)
+            print("VALUE IS")
+            print(value)
             if value > best_val:
                 best_val = value
                 best_state = state
-        print "AlphaBeta:  Utility Value of Root Node: = " + str(best_val)
-        print "AlphaBeta:  Best State is: " + best_state.Name
+        print("AlphaBeta:  Utility Value of Root Node: = " + str(best_val))
+        # print("AlphaBeta:  Best State is: " + best_state.Name)
         return best_state
 
     def max_value(self, node, alpha, beta):
-        print "AlphaBeta-->MAX: Visited Node :: " + node.Name
+        # print("AlphaBeta-->MAX: Visited Node :: " + node.Name)
         if self.isTerminal(node):
             return self.getUtility(node)
         infinity = float('inf')
@@ -38,7 +40,9 @@ class AlphaBeta:
         return value
 
     def min_value(self, node, alpha, beta):
-        print "AlphaBeta-->MIN: Visited Node :: " + node.Name
+        print("NODE FROM MIN:")
+        print(node)
+        # print("AlphaBeta-->MIN: Visited Node :: " + node.Name)
         if self.isTerminal(node):
             return self.getUtility(node)
         infinity = float('inf')
@@ -50,7 +54,6 @@ class AlphaBeta:
             if value <= alpha:
                 return value
             beta = min(beta, value)
-
         return value
 
     # successor states in a game tree are the child nodes...
@@ -62,6 +65,7 @@ class AlphaBeta:
     # return false if the node has children (successor states)
     def isTerminal(self, node):
         assert node is not None
+        print(node)
         return len(node.children) == 0
 
     def getUtility(self, node):

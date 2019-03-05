@@ -6,24 +6,29 @@ def PrintBoard(board):
         if(board[i]==0):
             if(cnt%2!=0):
                 if(i%2==0):
-                    linestr = "__ " + linestr
+                    linestr += "__ "
                 else:
-                    linestr = "## " + linestr
+                    linestr += "## "
             else:
                 if(i%2==0):
-                    linestr = "## " + linestr
+                    linestr += "## "
                 else:
-                    linestr = "__ " + linestr
+                    linestr += "__ " 
         else:
-            linestr = (str(board[i]) + " ") + linestr
+            linestr += (str(board[i]) + " ")
         if(i%8==0):
+            #linestr += " \n"
             if(i==0):
-                linestr = ("%2s" % str((cnt-8)*-8))+ "   " + linestr + "\n" + "\n"
-                coords= "     " + "0  " + "1  " + "2  " + "3  " + "4  " + "5  " + "6  " + "7  "
+                linestr = "   " + linestr + "   " + ("%2s" % str((cnt-8)*-8)) + "\n" + "\n" 
+                #linestr = ("%2s" % str((cnt-8)*-8))+ "   " + linestr + "\n" + "\n"
+                coords= "  " + "  7" + "  6" + "  5" + "  4" + "  3" + "  2" + "  1" + "  0" + "     "
+                #coords= "     " + "0  " + "1  " + "2  " + "3  " + "4  " + "5  " + "6  " + "7  "
                 linestr += coords
             else:
-                linestr = ("%2s" % str((cnt-8)*-8))+ "   " + linestr + "\n" + "\n"
+                linestr =  "   " + linestr + "   " + ("%2s" % str((cnt-8)*-8)) + "\n" + "\n"
+                #linestr = ("%2s" % str((cnt-8)*-8))+ "   " + linestr + "\n" + "\n"
             boardstr += linestr
+            #print(linestr)
             linestr = ""
             cnt += 1
     print(boardstr)
@@ -31,11 +36,23 @@ def PrintBoard(board):
     print("_ black, # white, 20 offset black, 10 offset white")
     return 0
 
+# def PrintBoard(board):
+#     accum="---- BLACK SIDE ----\n"
+#     max=63
+#     for j in range(0,8,1):
+#         for i in range(max-j*8,max-j*8-8,-1):
+#             accum=accum+'{0: <5}'.format(board[i])
+#         accum=accum+"\n"
+#     accum=accum+"---- WHITE SIDE ----"
+#     print(accum)
+#     return accum
+
 def GenBoard():
-    board = [13,11,12,14,15,12,11,13,10,10,10,10,10,10,10,10]
+    board = [13,11,12,15,14,12,11,13,10,10,10,10,10,10,10,10]
     for i in range(16,48,1):
         board += [0]
-    board += [20,20,20,20,20,20,20,20,23,21,22,24,25,22,21,23]
+    board += [20,20,20,20,20,20,20,20,23,21,22,25,24,22,21,23]
+    # print(board)
     return board
 
 def GetPlayerPositions(board, player):
@@ -50,6 +67,9 @@ def GetPieceLegalMoves(board,position):
     #determine which board positions are under threat by other team
     #positions not under threat and available for the type of piece are legal moves
     piece = board[position]
+    if piece==0:
+        print("there is no piece in that position! GetPieceLegalMoves failed.")
+        return [-1]
     pieces = {
         10: WPawnLM,
         11: WKnightLM,
@@ -170,7 +190,7 @@ def WBishopLM(board,position):
         else:
             break
     tmp=position
-    while((tmp+9)>=0 and (tmp+9)<64 and (tmp-tmp//8)%7!=0):
+    while((tmp+9)>=0 and (tmp+9)<64 and ((tmp+1)%8)!=0):
         if(board[tmp+9]==0):
             moves+=[tmp+9]
             tmp+=9
@@ -180,7 +200,7 @@ def WBishopLM(board,position):
         else:
             break
     tmp=position
-    while((tmp-7)>=0 and (tmp-7)<64 and (tmp-tmp//8)%7!=0):
+    while((tmp-7)>=0 and (tmp-7)<64 and ((tmp+1)%8)!=0):
         if(board[tmp-7]==0):
             moves+=[tmp-7]
             tmp-=7
@@ -214,7 +234,7 @@ def BBishopLM(board,position):
         else:
             break
     tmp=position
-    while((tmp+9)>=0 and (tmp+9)<64 and (tmp-tmp//8)%7!=0):
+    while((tmp+9)>=0 and (tmp+9)<64 and ((tmp+1)%8)!=0):
         if(board[tmp+9]==0):
             moves+=[tmp+9]
             tmp+=9
@@ -224,7 +244,7 @@ def BBishopLM(board,position):
         else:
             break
     tmp=position
-    while((tmp-7)>=0 and (tmp-7)<64 and (tmp-tmp//8)%7!=0):
+    while((tmp-7)>=0 and (tmp-7)<64 and ((tmp+1)%8)!=0):
         if(board[tmp-7]==0):
             moves+=[tmp-7]
             tmp-=7
@@ -268,10 +288,10 @@ def WRookLM(board,position):
         else:
             break
     tmp=position
-    while((tmp+1)>0 and (tmp+1)<64):
-        if((tmp-tmp//8)%7==0):
+    while((tmp+1)<64):
+        if((tmp+1)%8==0):
             break
-        if(board[tmp+1]==0):
+        elif(board[tmp+1]==0):
             moves+=[tmp+1]
             tmp+=1
         elif(board[tmp+1]>15):
@@ -280,10 +300,10 @@ def WRookLM(board,position):
         else:
             break
     tmp=position
-    while((tmp-1)>0 and (tmp-1)<64):
+    while((tmp-1)>=0):
         if(tmp%8==0):
             break
-        if(board[tmp-1]==0):
+        elif(board[tmp-1]==0):
             moves+=[tmp-1]
             tmp-=1
         elif(board[tmp-1]>15):
@@ -317,7 +337,7 @@ def BRookLM(board,position):
             break
     tmp=position
     while((tmp+1)>0 and (tmp+1)<64):
-        if((tmp-tmp//8)%7==0):
+        if((tmp+1)%8==0):
             break
         if(board[tmp+1]==0):
             moves+=[tmp+1]
@@ -357,7 +377,7 @@ def WKingLM(board,position):
     moves=[]
     if(position%8==0):
         a=[1,8,9,-7,-8]
-    elif((position-position//8)%7==0):
+    elif((position+1)%8==0):
         a=[-1,7,8,-9,-8]
     else:
         a = [-1,1,7,8,9,-7,-8,-9]
@@ -373,7 +393,7 @@ def BKingLM(board,position):
     moves=[]
     if(position%8==0):
         a=[1,8,9,-7,-8]
-    elif((position-position//8)%7==0):
+    elif((position+1)%8==0):
         a=[-1,7,8,-9,-8]
     else:
         a = [-1,1,7,8,9,-7,-8,-9]
@@ -385,20 +405,54 @@ def BKingLM(board,position):
                 moves+=[position+i]
     return moves
 
-def KingSafe(player,board):
-    kingval=25
-    if(player==10):
-        kingval=15
+def isCheckmate(board,player):
     for i in range(0,64,1):
-        if(board[i]==kingval):
-            [isnotsafe,threats]=IsPositionUnderThreat(board,i,player)
-            if isnotsafe==True:
-                return [False,threats]
-    return [True,-1]
+        if(board[i]-player==5):
+            [underThreat,threats]=IsPositionUnderThreat(board,i,player)
+            if(underThreat==True):
+                if len(threats)>1:
+                    kingMoves=GetPieceLegalMoves(board,i)
+                    for k in kingMoves:
+                        tmpb=board[:]
+                        tmpb[k]=tmpb[i]
+                        tmpb[i]=0
+                        [newPosThreat,newThreats]=IsPositionUnderThreat(tmpb,k,player)
+                        if(newPosThreat==False):
+                            return False
+                    return True
+                elif len(threats)==1:
+                    kingMoves=GetPieceLegalMoves(board,i)
+                    for k in kingMoves:
+                        tmpb=board[:]
+                        tmpb[k]=tmpb[i]
+                        tmpb[i]=0
+                        [newPosThreat,newThreats]=IsPositionUnderThreat(tmpb,k,player)
+                        if(newPosThreat==False):
+                            return False
+                    for l in GetPlayerPositions(board,player):
+                        if(l!=i):
+                            pieceMoves=GetPieceLegalMoves(board,l)
+                            for k in pieceMoves:
+                                tmpb=board[:]
+                                tmpb[k]=tmpb[l]
+                                tmpb[l]=0
+                                [reCheckThreat,reThreats]=IsPositionUnderThreat(tmpb,i,player)
+                                if(reCheckThreat==False):
+                                    return False
+                    return True
+                else:
+                    return False
+            else:
+                return False
+    return False
 
-#def isCheckmated(player,board):
 
-#def isCheck(player,board):
+def isInCheck(board,player):
+    for i in range(0,64,1):
+        if((board[i]-player)==5):
+            [underThreat,threats]=IsPositionUnderThreat(board,i,player)
+            return underThreat
+    return False
 
 def IsPositionUnderThreat(board,position,player):
     threats=[]
@@ -411,7 +465,7 @@ def IsPositionUnderThreat(board,position,player):
                 potentThreats=GetPieceLegalMoves(board,i)
                 for k in potentThreats:
                     if(position==k):
-                        threats+=[board[i]]
+                        threats+=[i]
                         underThreat=True
                         break
     elif(player==20):
@@ -420,7 +474,7 @@ def IsPositionUnderThreat(board,position,player):
                 potentThreats=GetPieceLegalMoves(board,i)
                 for k in potentThreats:
                     if(position==k):
-                        threats+=[board[i]]
+                        threats+=[i]
                         underThreat=True
                         break
     return [underThreat,threats]
